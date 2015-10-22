@@ -97,7 +97,10 @@ public final class SerializationUtil {
     try {
       bais = new ByteArrayInputStream(bytes);
       gis = new GZIPInputStream(bais);
-      ois = new ClassLoaderObjectInputStream(conf.getClassLoader(), gis);
+      System.out.println(conf.getClassLoader());
+      System.out.println(Thread.currentThread().getContextClassLoader());
+      ois = new ClassLoaderObjectInputStream(Thread.currentThread().getContextClassLoader(), gis);
+
       return (T) ois.readObject();
     } catch (ClassNotFoundException e) {
       throw new IOException("Could not read object from config with key " + key, e);
