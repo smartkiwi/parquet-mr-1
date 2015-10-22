@@ -27,6 +27,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.input.ClassLoaderObjectInputStream;
 import org.apache.hadoop.conf.Configuration;
 
 import org.apache.parquet.Closeables;
@@ -91,12 +92,12 @@ public final class SerializationUtil {
 
     ByteArrayInputStream bais = null;
     GZIPInputStream gis = null;
-    ObjectInputStream ois = null;
+    ClassLoaderObjectInputStream ois = null;
 
     try {
       bais = new ByteArrayInputStream(bytes);
       gis = new GZIPInputStream(bais);
-      ois = new ObjectInputStream(gis);
+      ois = new ClassLoaderObjectInputStream(conf.getClassLoader(), gis);
       return (T) ois.readObject();
     } catch (ClassNotFoundException e) {
       throw new IOException("Could not read object from config with key " + key, e);
